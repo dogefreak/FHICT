@@ -1,4 +1,3 @@
- 
 # Function to validate the password 
 def password_check(passwd): 
       
