@@ -4,5 +4,5 @@ In this directory you'll find a few challenges I've done for the so called "Appl
 ## File Structure
 The main scrips will namely be challenges, while the training course directory are things from the training course at Cisco's NetAcad that I found particularly interesting!
 ## Practice-challenges
-* [Password-checker](https://www.google.com)
+* [Password-checker](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Passwordchecker.py)
 * [Password-generator](https://www.google.com)
