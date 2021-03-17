@@ -2,7 +2,7 @@
 
 ## Welcome
 
-I'd like to welcome you to my personal FHICT repo. This repo is meant for sharing code I've created during my school career. Feel free to take a look, or try some scripts that I've created.
+I'd like to welcome you to my personal FHICT repo. This repo is meant for sharing code or projects I've created during my school career. Feel free to take a look, or try some scripts that I've created.
 
 ## FHICT
 
