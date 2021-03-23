@@ -24,6 +24,16 @@ def numbchecker():
                 securitymessage = True
                 print("It's ill-advised to have a password under the length of 6 characters!")
             numericcheck = False
+            if length > 50:
+                while True:
+                    warning = input("\nAre you sure you want a password over 50 characters?: ")
+                    if warning in yes:
+                        print("\nThis might break the password generator!")
+                        break
+                    elif warning in no:
+                        main()
+                    else: print("There's been an exception! :(")                   
+            numericcheck = False
             break
         except ValueError:
             print("\nThat's not a number, try again!\n")
