@@ -43,12 +43,16 @@ def check(question):
 def main():
     firsttry = check("Welcome to the BSN genarator, do you want one?")
     if firsttry is True: bsnGen()
-    else: exit()
+    else:
+        print("Ciao!")
+        exit()
     
     while True:
         secondtry = check("\nDo you want another one?")
         if secondtry is True: bsnGen()
-        else: break
+        else:
+            print("Ciao!")
+            break
     exit()
 
 main()
