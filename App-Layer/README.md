@@ -7,3 +7,4 @@ The main scrips will namely be challenges, while the training course directory a
 * [Password-checker](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Passwordchecker.py)
 * [Password-generator](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Passwordgenerator.py)
 * [Password-generator (with functions)](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Passwordgenerator_func.py)
+* [BSN-generator](https://github.com/dogefreak/FHICT/blob/main/App-Layer/BSN-generator.py)
