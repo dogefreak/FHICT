@@ -23,7 +23,7 @@ def bsnGen():
         maths = som % 11
 
         if maths == 0:
-            print("Succes!\n")
+            print("\nSucces!\n")
             print(*chars)
             break
         else: continue
