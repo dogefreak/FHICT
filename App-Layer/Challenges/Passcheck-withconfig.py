@@ -18,7 +18,6 @@ punctuation = True
 #Read settings from config file, or create file
 def settings_check():
     config = ConfigParser()
-
     #Create config file if it doesn't exist
     if not os.path.exists('config.ini'):
         config['Requirements'] = {'minlength': '6',
@@ -41,9 +40,7 @@ def settings_check():
 
 # Method to validate the password 
 def password_check(passwd):
-    
-    errorstring = "\nYour password should at least contain: "
-      
+    errorstring = "\nYour password should at least contain: " 
     if len(passwd) < int(minlength): errorstring = errorstring + '\n* ' + str(minlength) + ' characters'
     if len(passwd) > int(maxlength): errorstring = errorstring + '\n* Less than ' + str(maxlength) + ' characters'
     if not any(char.isdigit() for char in passwd):
