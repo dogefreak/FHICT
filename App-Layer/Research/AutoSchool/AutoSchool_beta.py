@@ -20,15 +20,10 @@ except:
     print("Problem with XML parser, please install 'lmxl' using 'pip3 install lxml'!")
     time.sleep(5)
     exit()
-try: import subprocess
-except: print("Problem with subprocces library")
-
 
 #Create global variables
-enablesynergy = False
 disablefriday = False
 disableweekend = True
-synergypath = "/Applications/Synergy.app"
 path = "https://opendata.rijksoverheid.nl/v1/sources/rijksoverheid/infotypes/schoolholidays/schoolyear/2020-2021"
 
 usehttp = True
@@ -40,11 +35,9 @@ enddates = []
 #Create absolute path
 here = os.path.dirname(os.path.abspath(__file__))
 configini = os.path.join(here, 'config.ini')
-teamsbot = os.path.join(here, 'Teams-Auto-Joiner-master/auto_joiner.py')
 
 #Read settings from config file, or create file
 def settings():
-    
     config = ConfigParser()
     
     #Create config file if it doesn't exist
@@ -53,47 +46,39 @@ def settings():
         if not os.path.exists('config.ini'):
             config['Configuration'] = {'disablefriday': str(disablefriday),
                                        'disableweekend': str(disableweekend),
-                                       'enablesynergy': str(enablesynergy),
-                                       'synergypath': str(synergypath),
                                        'path': str(path)}
             with open(configini, 'w') as configfile:
                 config.write(configfile)
-                print(message)
-        
-
+                print(message)       
+                
     checkcreate("Config file was written in same path as this script!\n")
 
     #Read config file and assign variables
     def readconfig():
-        global path, synergypath, disablefriday, disableweekend, enablesynergy
+        global path, disablefriday, disableweekend
         config.read(configini)
         disablefriday = config.getboolean('Configuration', 'disablefriday')
         disableweekend = config.getboolean('Configuration', 'disableweekend')
-        enablesynergy = config.getboolean('Configuration', 'enablesynergy')
-        synergypath = config.get('Configuration', 'synergypath')
         path = config.get('Configuration', 'path')
 
     #Try to read config, if exception: remove config and create new one and read it again
     try: readconfig()
     except:
-        os.remove('config.ini')
+        os.remove(configini)
         checkcreate("Corrupted file detected, created new config!\n\n")
         readconfig()
 
 
 def read_xml():
-
     global path, vacation, data, startdates, enddates, usehttp
-
+    
     def parse(f):
-
         global data
             
         tree = etree.parse(f)
         root = tree.getroot()
 
         vacationlist = root[3][0][2]
-
         index = -1
         
         for v in vacationlist:
@@ -116,7 +101,6 @@ def read_xml():
         vacation = True
         print("XML File not found!")
 
-
     for x in range(len(data)):
         date = datetime.datetime.strptime(data[x], '%Y-%m-%dT%H:%M:%S')
         if not x % 2: startdates.append(date)
@@ -131,11 +115,10 @@ def read_xml():
         else: vacation = False
 
     if vacationcheck is True: vacation = True
-
         
 def main():
     
-    global path, synergypath, disablefriday, disableweekend, enablesynergy, vacation, usehttp
+    global path, disablefriday, disableweekend, vacation, usehttp
 
     settings()
 
@@ -154,24 +137,10 @@ def main():
         time.sleep(1)
         exit()
 
-    #If vacation is false: open synergy, open teamsbot
-    
+    #If vacation is false: do something
     if vacation is False:
         print("Schoolday :(")
-        
-        #Open synergy
-        if enablesynergy: os.system("open " + str(synergypath))
-        #subprocess.call(synergypath)
-        #subprocess.call(["/bin/bash","-c","open " + str(synergypath)])
-        
-        #Autohide?
-        #os.system("""osascript -e 'tell app "Synergy" to close every window'""")
-        
-        #Run Teams Auto Joiner
-        #subprocess.call(["/bin/bash","-c","python3 " + str(teamsbot)])
-        os.system('python3 ' + str(teamsbot))
-        #exit()
-
+        #Or do something ;)
 main()
 
 
