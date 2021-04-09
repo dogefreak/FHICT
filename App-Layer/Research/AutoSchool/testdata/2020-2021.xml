@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document><id>94f2a45a-eefe-44a4-b4bb-33be9c260047</id><type>schoolvakanties</type><canonical>http://www.rijksoverheid.nl/onderwerpen/schoolvakanties/schoolvakanties-2020-2021</canonical><content><contentblock><title><![CDATA[
+            Overzicht schoolvakanties schooljaar 2020 - 2021 
+           ]]></title><schoolyear><![CDATA[
+              2020 - 2021 
+            ]]></schoolyear><vacations><vacation><type><![CDATA[
+                         Herfstvakantie 
+                    ]]></type><compulsorydates>false</compulsorydates><regions><region>noord</region><startdate>2020-10-10T22:00:00.000Z</startdate><enddate>2020-10-18T21:59:00.000Z</enddate></regions><regions><region>midden</region><startdate>2020-10-17T22:00:00.000Z</startdate><enddate>2020-10-25T22:59:00.000Z</enddate></regions><regions><region>zuid</region><startdate>2020-10-17T22:00:00.000Z</startdate><enddate>2020-10-25T22:59:00.000Z</enddate></regions></vacation><vacation><type><![CDATA[
+                         Kerstvakantie 
+                    ]]></type><compulsorydates>true</compulsorydates><regions><region>heel Nederland</region><startdate>2020-12-19T23:00:00.000Z</startdate><enddate>2021-01-03T22:59:00.000Z</enddate></regions></vacation><vacation><type><![CDATA[
+                         Voorjaarsvakantie 
+                    ]]></type><compulsorydates>false</compulsorydates><regions><region>noord</region><startdate>2021-02-20T23:00:00.000Z</startdate><enddate>2021-02-28T22:59:00.000Z</enddate></regions><regions><region>midden</region><startdate>2021-02-20T23:00:00.000Z</startdate><enddate>2021-02-28T22:59:00.000Z</enddate></regions><regions><region>zuid</region><startdate>2021-02-13T23:00:00.000Z</startdate><enddate>2021-02-21T22:59:00.000Z</enddate></regions></vacation><vacation><type><![CDATA[
+                         Meivakantie 
+                    ]]></type><compulsorydates>true</compulsorydates><regions><region>heel Nederland</region><startdate>2021-04-09T15:07:00.000Z</startdate><enddate>2021-04-09T15:07:30.000Z</enddate></regions></vacation><vacation><type><![CDATA[
+                         Zomervakantie 
+                    ]]></type><compulsorydates>true</compulsorydates><regions><region>noord</region><startdate>2021-07-10T22:00:00.000Z</startdate><enddate>2021-08-22T21:59:00.000Z</enddate></regions><regions><region>midden</region><startdate>2021-07-17T22:00:00.000Z</startdate><enddate>2021-08-29T21:59:00.000Z</enddate></regions><regions><region>zuid</region><startdate>2021-07-24T22:00:00.000Z</startdate><enddate>2021-09-05T21:59:00.000Z</enddate></regions></vacation></vacations></contentblock></content><notice><![CDATA[
+        
+            &sup1; Voor deze vakantie geeft het ministerie van OCW alleen adviesdata. Scholen mogen hier dus van afwijken. Het ministerie adviseert om bij de school na te vragen op welke dagen deze gesloten is in verband met vakantie.
+         
+    ]]></notice><authorities><department>
+             Ministerie van Onderwijs, Cultuur en Wetenschap 
+        </department></authorities><creators><department>
+            Ministerie van Onderwijs, Cultuur en Wetenschap
+        </department></creators><license>CC0 1.0 Universal</license><rightsholders><department>Ministerie van Algemene Zaken</department></rightsholders><language>nl-NL</language><location>Nederland</location><lastmodified>2013-07-25T06:58:41.060Z</lastmodified></document>
