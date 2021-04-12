@@ -10,6 +10,6 @@ The main scrips will namely be challenges (which can be found in the same direct
 * [Password-checker (configurable)](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/Passcheck-withconfig.py)
 * [Password-generator](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/Passwordgenerator.py)
 * [Password-generator (with functions)](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/Passwordgenerator_func.py)
-
-* [Not really a challenge but decent complexity](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/AutoSchool_beta.py)
+    
+* [Vacation-checker(not a challenge but decent complexity)](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/AutoSchool_beta.py)
 
