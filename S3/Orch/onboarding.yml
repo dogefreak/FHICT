@@ -1,12 +1,20 @@
-
-
 ---
 - hosts: testhosts
   become: yes
+  vars:
+    USERNAME: {{{FIRSTNAME[0]}+{LASTNAME} | trim}}
+    ldap_auth:
+      server_uri: ldap://ldap.lan/
+      bind_dn: cn=admin,dc=ldap,dc=lan
+      bind_pw: admin
 
   vars_prompt:
-    - name: USERNAME
-      prompt: 'What is the new username?'
+    - name: FIRSTNAME
+      prompt: 'What is the first name?'
+      private: no
+      
+    - name: LASTNAME
+      prompt: 'What is the last name?'
       private: no
 
     - name: PASSWORD
@@ -15,65 +23,13 @@
       encrypt: sha512_crypt
       salt_size: 7
 
-    - name: ROLE
-      prompt: 'What role must be assigned to the new user? (eq: office, programmer, admin, web)'
+    - name: GROUP
+      prompt: 'What role must be assigned to the new user? (guest, employee, administrator)'
       private: no
 
-
   tasks:
-    - block:
-      - name: Creating user "{{USERNAME}}"
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          groups: sudo
-          append: yes
-          createhome: yes
-          state: present
-          shell: /bin/bash
-          system: yes
-      when: ROLE == "admin"
-
-    - block:
-      - name: Creating user "{{USERNAME}}"
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          createhome: yes
-          state: present
-      - name: Installing required software for "{{ ROLE }}"
-        apt:
-          update_cache: yes
-          pkg:
-          - python2
-          - python3
-      when: ROLE == "programmer"
-
-    - block:
-      - name: Creating user "{{USERNAME}}"
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          createhome: yes
-          state: present
-      - name: Installing required software for "{{ ROLE }}"
-        apt:
-          update_cache: yes
-          pkg:
-          - apache2
-          - certbot
-      when: ROLE == "web"
-
-    - block:
-      - name: Creating user "{{USERNAME}}"
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          createhome: yes
-          state: present
-      - name: Installing required software for "{{ ROLE }}"
-        apt:
-          update_cache: yes
-          pkg:
-          - libreoffice
-      when: ROLE == "office"
+    - name: 'Creating: "{{ USERNAME }}"'
+      community.general.ldap_entry:
+        dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
+        objectClass: posixAccount
+      args: "{{ ldap_auth }}"
