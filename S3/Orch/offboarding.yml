@@ -1,6 +1,11 @@
 ---
 - hosts: testhosts
   become: yes
+  
+  ldap_auth:
+    server_uri: ldap://ldap.lan/
+    bind_dn: cn=admin,dc=ldap,dc=lan
+    bind_pw: admin
 
   vars_prompt:
     - name: USERNAME
@@ -8,8 +13,8 @@
       private: no
 
   tasks:
-    - name: "Removing user: {{ USERNAME }}"
-      user:
-        name: "{{ USERNAME }}"
+    - name: Removing user: {{ USERNAME }}
+      community.general.ldap_entry:
+        dn: uid={{ USERNAME }},ou=users,dc=ldap,dc=lan
         state: absent
-        remove: yes
+      args: "{{ ldap_auth }}"
