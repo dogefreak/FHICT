@@ -13,8 +13,8 @@
       private: no
 
   tasks:
-    - name: Removing user: {{ USERNAME }}
+    - name: Removing user: "{{ USERNAME }}"
       community.general.ldap_entry:
-        dn: uid={{ USERNAME }},ou=users,dc=ldap,dc=lan
+        dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
         state: absent
       args: "{{ ldap_auth }}"
