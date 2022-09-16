@@ -2,7 +2,7 @@
 - hosts: testhosts
   become: yes
   vars:
-    USERNAME: {{{FIRSTNAME[0]}+{LASTNAME} | trim}}
+    USERNAME: "{{FIRSTNAME[0] | replace(' ', '')}}{{LASTNAME| replace (' ', '')}}"
     ldap_auth:
       server_uri: ldap://ldap.lan/
       bind_dn: cn=admin,dc=ldap,dc=lan
@@ -19,9 +19,7 @@
 
     - name: PASSWORD
       prompt: 'What is the new password?'
-      private: yes
-      encrypt: sha512_crypt
-      salt_size: 7
+      private: no
 
     - name: GROUP
       prompt: 'What role must be assigned to the new user? (guest, employee, administrator)'
@@ -29,7 +27,21 @@
 
   tasks:
     - name: 'Creating: "{{ USERNAME }}"'
-      community.general.ldap_entry:
+      ldap_entry:
         dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
-        objectClass: posixAccount
+        objectClass:
+          - person
+          - inetOrgPerson
+          - posixAccount
+        attributes:
+          cn: "{{ FIRSTNAME }} {{ LASTNAME }}"
+          uid: "{{ USERNAME }}"
+          givenName: "{{ FIRSTNAME }}"
+          sn: "{{LASTNAME}}"
+          loginShell: /bin/bash
+          homeDirectory: /home/{{ USERNAME }}
+          gidNumber: 501
+          userPassword: "{{ PASSWORD }}"
+          uidNumber: 69
       args: "{{ ldap_auth }}"
+
