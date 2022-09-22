@@ -1,0 +1,22 @@
+---
+
+- name: Undeploy/Remove webserver(s)
+  hosts: all
+  tasks:
+
+    - name: Stop and disable apache2 service
+      service:
+        name: apache2
+        enabled: false
+        state: stopped
+
+    - name: Remove /var/www directory
+      file:
+        state: absent
+        path: /var/www
+
+    - name: Remove apache2 package completely
+      apt:
+        name: apache2
+        state: absent
+        purge: yes
