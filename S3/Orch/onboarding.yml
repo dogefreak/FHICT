@@ -4,7 +4,7 @@
   vars:
     USERNAME: "{{FIRSTNAME[0] | replace(' ', '')}}{{LASTNAME| replace (' ', '')}}"
     ldap_auth:
-      server_uri: ldap://ldap.lan/
+      server_uri: ldap://ldap.lan:389
       bind_dn: cn=admin,dc=ldap,dc=lan
       bind_pw: admin
 
