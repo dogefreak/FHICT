@@ -1,0 +1,102 @@
+---
+- hosts:
+   ldap
+   client
+  become: yes
+  
+  vars:
+    USERNAME: "{{FIRSTNAME[0] | replace(' ', '')}}{{LASTNAME| replace (' ', '')}}"
+    ldap_auth:
+      server_uri: ldap://ldap.lan:389
+      bind_dn: cn=admin,dc=ldap,dc=lan
+      bind_pw: admin
+
+  vars_prompt:
+    - name: FIRSTNAME
+      prompt: 'What is the first name?'
+      private: no
+      
+    - name: LASTNAME
+      prompt: 'What is the last name?'
+      private: no
+
+    - name: PASSWORD
+      prompt: 'What is the new password?'
+      private: no
+
+    - name: GROUP
+      prompt: 'What role must be assigned to the new user? (guest, employee, hr, administrator)'
+      private: no
+
+tasks:
+  when: inventory_hostname in groups['ldap']
+    - name: 'Creating: "{{ USERNAME }}"'
+      ldap_entry:
+        dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
+        objectClass:
+          - person
+          - inetOrgPerson
+          - posixAccount
+        attributes:
+          cn: "{{ FIRSTNAME }} {{ LASTNAME }}"
+          uid: "{{ USERNAME }}"
+          givenName: "{{ FIRSTNAME }}"
+          sn: "{{LASTNAME}}"
+          loginShell: /bin/bash
+          homeDirectory: /home/{{ USERNAME }}
+          gidNumber: "{{GROUP}}"
+          userPassword: "{{ PASSWORD }}"
+          uidNumber: 69
+      args: "{{ ldap_auth }}"
+      
+  when: inventory_hostname in groups['client']
+  - block:
+      - name: Creating user "{{USERNAME}}"
+        user:
+          name: "{{USERNAME}}"
+          password: "{{PASSWORD}}"
+          groups: sudo
+          append: yes
+          createhome: yes
+          state: present
+          shell: /bin/bash
+          system: yes
+      when: GROUP == "administator"
+
+    - block:
+      - name: Creating user "{{USERNAME}}"
+        user:
+          name: "{{USERNAME}}"
+          password: "{{PASSWORD}}"
+          createhome: yes
+          state: present
+      - name: Installing required software for "{{ GROUP }}"
+        apt:
+          update_cache: yes
+          pkg:
+          - python3
+          - ansible
+      when: GROUP == "hr"
+      
+    - block:
+      - name: Creating user "{{USERNAME}}"
+        user:
+          name: "{{USERNAME}}"
+          password: "{{PASSWORD}}"
+          createhome: yes
+          state: present
+      - name: Installing required software for "{{ GROUP }}"
+        apt:
+          update_cache: yes
+          pkg:
+          - libreoffice
+      when: GROUP == "employee"
+      
+    - block:
+      - name: Creating user "{{USERNAME}}"
+        user:
+          name: "{{USERNAME}}"
+          password: "{{PASSWORD}}"
+          createhome: yes
+          state: present
+      when: GROUP == "guest"
