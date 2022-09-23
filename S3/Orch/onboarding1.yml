@@ -29,8 +29,8 @@
       private: no
 
 tasks:
-  when: inventory_hostname in groups['ldap']
-    - name: 'Creating: "{{ USERNAME }}"'
+  - name: 'Creating: "{{ USERNAME }}"'
+    when: inventory_hostname in groups['ldap']
       ldap_entry:
         dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
         objectClass:
@@ -51,7 +51,6 @@ tasks:
       
   when: inventory_hostname in groups['client']
   - block:
-      - name: Creating user "{{USERNAME}}"
         user:
           name: "{{USERNAME}}"
           password: "{{PASSWORD}}"
@@ -64,7 +63,6 @@ tasks:
       when: GROUP == "administator"
 
     - block:
-      - name: Creating user "{{USERNAME}}"
         user:
           name: "{{USERNAME}}"
           password: "{{PASSWORD}}"
@@ -79,7 +77,6 @@ tasks:
       when: GROUP == "hr"
       
     - block:
-      - name: Creating user "{{USERNAME}}"
         user:
           name: "{{USERNAME}}"
           password: "{{PASSWORD}}"
@@ -93,7 +90,6 @@ tasks:
       when: GROUP == "employee"
       
     - block:
-      - name: Creating user "{{USERNAME}}"
         user:
           name: "{{USERNAME}}"
           password: "{{PASSWORD}}"
