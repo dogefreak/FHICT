@@ -28,7 +28,7 @@
       prompt: 'What role must be assigned to the new user? (guest, employee, hr, administrator)'
       private: no
 
-tasks:
+  tasks:
   - name: 'Creating: "{{ USERNAME }}"'
     when: inventory_hostname in groups['ldap']
       ldap_entry:
