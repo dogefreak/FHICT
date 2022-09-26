@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  
+  vars_prompt:
+    - name: USERNAME
+      prompt: 'What is the username you want to remove?'
+      private: no
+
+  tasks:
+  - name: Create variables
+    set_fact:
+      uname: "{{USERNAME}}"
+
+- hosts: ldap
+  become: yes
+  vars:
+    ldap_auth:
+      server_uri: ldap://ldap.lan/
+      bind_dn: cn=admin,dc=ldap,dc=lan
+      bind_pw: admin
+
+    USERNAME: "{{hostvars['localhost']['uname']}}"
+
+  tasks:
+    - name: Removing LDAP user "{{ USERNAME }}"
+      community.general.ldap_entry:
+        dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
+        state: absent
+      args: "{{ ldap_auth }}"
+
+
+- hosts: client
+  become: yes
+  vars:
+    USERNAME: "{{hostvars['localhost']['uname']}}"
+
+  tasks:
+    - name: Removing Client user "{{ USERNAME }}"
+      user:
+        name: "{{ USERNAME }}"
+        state: absent
+        remove: yes
