@@ -1,15 +1,9 @@
 ---
-- hosts:
-   ldap
-   client
+- hosts: localhost
   become: yes
-  
+
   vars:
     USERNAME: "{{FIRSTNAME[0] | replace(' ', '')}}{{LASTNAME| replace (' ', '')}}"
-    ldap_auth:
-      server_uri: ldap://ldap.lan:389
-      bind_dn: cn=admin,dc=ldap,dc=lan
-      bind_pw: admin
 
   vars_prompt:
     - name: FIRSTNAME
@@ -22,77 +16,138 @@
 
     - name: PASSWORD
       prompt: 'What is the new password?'
-      private: no
+      private: yes
 
     - name: GROUP
-      prompt: 'What role must be assigned to the new user? (guest, employee, hr, administrator)'
+      prompt: 'What role must be assigned to the new user? (guests, employees, hr, administrators)'
       private: no
 
   tasks:
-  - name: 'Creating: "{{ USERNAME }}"'
-    when: inventory_hostname in groups['ldap']
-      ldap_entry:
-        dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
-        objectClass:
-          - person
-          - inetOrgPerson
-          - posixAccount
-        attributes:
-          cn: "{{ FIRSTNAME }} {{ LASTNAME }}"
-          uid: "{{ USERNAME }}"
-          givenName: "{{ FIRSTNAME }}"
-          sn: "{{LASTNAME}}"
-          loginShell: /bin/bash
-          homeDirectory: /home/{{ USERNAME }}
-          gidNumber: "{{GROUP}}"
-          userPassword: "{{ PASSWORD }}"
-          uidNumber: 69
-      args: "{{ ldap_auth }}"
-      
-  when: inventory_hostname in groups['client']
-  - block:
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          groups: sudo
-          append: yes
-          createhome: yes
-          state: present
-          shell: /bin/bash
-          system: yes
-      when: GROUP == "administator"
+  - name: Create variables
+    set_fact:
+      fname: "{{FIRSTNAME}}"
+      lname: "{{LASTNAME}}"
+      uname: "{{USERNAME}}"
+      group: "{{GROUP}}"
+      passw: "{{PASSWORD}}"
 
-    - block:
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          createhome: yes
-          state: present
-      - name: Installing required software for "{{ GROUP }}"
-        apt:
-          update_cache: yes
-          pkg:
-          - python3
-          - ansible
-      when: GROUP == "hr"
+- name: Create LDAP user
+  hosts: ldap
+  become: yes
+
+  vars:
+    ldap_auth:
+      server_uri: ldap://ldap.lan:389
+      bind_dn: cn=admin,dc=ldap,dc=lan
+      bind_pw: admin
+
+    GROUPID: 0
+
+    FIRSTNAME: "{{hostvars['localhost']['fname']}}"
+    LASTNAME: "{{hostvars['localhost']['lname']}}"
+    USERNAME: "{{hostvars['localhost']['uname']}}"
+    GROUP: "{{hostvars['localhost']['group']}}"
+    PASSWORD: "{{hostvars['localhost']['passw']}}"
+
+  tasks:
+  - block:
+    - set_fact:
+        GROUPID: 500
+    when: GROUP == "administrators"
+
+  - block:
+    - set_fact:
+        GROUPID: 501
+    when: GROUP == "guests"
+
+  - block:
+    - set_fact:
+        GROUPID: 502
+    when: GROUP == "employees"
+
+  - block:
+    - set_fact:
+        GROUPID: 503
+    when: GROUP == "hr"
+
+  - name: Creating LDAP User "{{ USERNAME }}"
+    ldap_entry:
+      dn: uid="{{ USERNAME }}",ou=users,dc=ldap,dc=lan
+      objectClass:
+        - person
+        - inetOrgPerson
+        - posixAccount
+      attributes:
+        cn: "{{ FIRSTNAME }} {{ LASTNAME }}"
+        uid: "{{ USERNAME }}"
+        givenName: "{{ FIRSTNAME }}"
+        sn: "{{LASTNAME}}"
+        loginShell: /bin/bash
+        homeDirectory: /home/{{ USERNAME }}
+        gidNumber: "{{ GROUPID }}" 
+        userPassword: "{{ PASSWORD }}"
+        uidNumber: 69
+    args: "{{ ldap_auth }}"
+
+- name: Create user on Client machine
+  hosts: client
+  become: yes
+
+  vars:
+    FIRSTNAME: "{{hostvars['localhost']['fname']}}"
+    LASTNAME: "{{hostvars['localhost']['lname']}}"
+    USERNAME: "{{hostvars['localhost']['uname']}}"
+    GROUP: "{{hostvars['localhost']['group']}}"
+    PASSWORD: "{{hostvars['localhost']['passw']}}"
+
+  tasks:
+  - block:
+    - name: Creating administator user "{{USERNAME}}"
+      user:
+        name: "{{USERNAME}}"
+        password: "{{PASSWORD | password_hash('sha512')}}"
+        groups: sudo
+        append: yes
+        createhome: yes
+        state: present
+        shell: /bin/bash
+        system: yes
+    when: GROUP == "administators"
+
+  - block:
+    - name: Creating hr user "{{USERNAME}}"
+      user:
+        name: "{{USERNAME}}"
+        password: "{{PASSWORD | password_hash('sha512')}}"
+        createhome: yes
+        state: present
+    - name: Installing required software for "{{ GROUP }}"
+      apt:
+        update_cache: yes
+        pkg:
+        - python3
+        - ansible
+    when: GROUP == "hr"
+    
+  - block:
+    - name: Creating employee user "{{USERNAME}}"
+      user:
+        name: "{{USERNAME}}"
+        password: "{{PASSWORD | password_hash('sha512')}}"
+        createhome: yes
+        state: present
+    - name: Installing required software for "{{ GROUP }}"
+      apt:
+        update_cache: yes
+        pkg:
+        - libreoffice
+    when: GROUP == "employees"
       
-    - block:
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          createhome: yes
-          state: present
-      - name: Installing required software for "{{ GROUP }}"
-        apt:
-          update_cache: yes
-          pkg:
-          - libreoffice
-      when: GROUP == "employee"
-      
-    - block:
-        user:
-          name: "{{USERNAME}}"
-          password: "{{PASSWORD}}"
-          createhome: yes
-          state: present
-      when: GROUP == "guest"
+  - block:
+    - name: Creating guest user "{{USERNAME}}" 
+      user:
+        name: "{{USERNAME}}"
+        password: "{{PASSWORD | password_hash('sha512')}}"
+        createhome: yes
+        state: present
+    when: GROUP == "guests"
