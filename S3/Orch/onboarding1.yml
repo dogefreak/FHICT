@@ -6,6 +6,10 @@
     USERNAME: "{{FIRSTNAME[0] | replace(' ', '')}}{{LASTNAME| replace (' ', '')}}"
 
   vars_prompt:
+    - name: TARGET_HOST
+      prompt: 'What is the IP of the remote machine?'
+      private: no
+
     - name: FIRSTNAME
       prompt: 'What is the first name?'
       private: no
@@ -30,6 +34,9 @@
       uname: "{{USERNAME}}"
       group: "{{GROUP}}"
       passw: "{{PASSWORD}}"
+  - add_host:
+      name: "{{TARGET_HOST}}"
+      groups: dynamic_hosts
 
 - name: Create LDAP user
   hosts: ldap
@@ -90,7 +97,7 @@
     args: "{{ ldap_auth }}"
 
 - name: Create user on Client machine
-  hosts: client
+  hosts: dynamic_hosts
   become: yes
 
   vars:
@@ -151,3 +158,4 @@
         createhome: yes
         state: present
     when: GROUP == "guests"
+
