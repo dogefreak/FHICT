@@ -2,6 +2,9 @@
 - hosts: localhost
   
   vars_prompt:
+    - name: TARGET_HOST
+      prompt: 'What is the IP of the remote machine?'
+      private: no
     - name: USERNAME
       prompt: 'What is the username you want to remove?'
       private: no
@@ -10,6 +13,9 @@
   - name: Create variables
     set_fact:
       uname: "{{USERNAME}}"
+  - add_host:
+      name: "{{TARGET_HOST}}"
+      groups: dynamic_hosts
 
 - hosts: ldap
   become: yes
@@ -29,12 +35,15 @@
       args: "{{ ldap_auth }}"
 
 
-- hosts: client
+- hosts: dynamic_hosts
   become: yes
   vars:
     USERNAME: "{{hostvars['localhost']['uname']}}"
 
   tasks:
+    - name: Rebooting machine to log out current user
+      ansible.builtin.reboot:
+
     - name: Removing Client user "{{ USERNAME }}"
       user:
         name: "{{ USERNAME }}"
