@@ -6,7 +6,7 @@ The main scrips will namely be challenges (which can be found in the same direct
 ## Challenges
 * [BSN-generator](https://github.com/dogefreak/FHICT/blob/main/S1/App-Layer/Challenges/BSN-generator.py)
 * [DNS-lookup](https://github.com/dogefreak/FHICT/blob/main/App-Layer/S1/Challenges/DNS-lookup.py)
-* [Is it vacation yet? (not a challenge but decent complexity)](https://github.com/dogefreak/FHICT/blob/main/App-Layer/S1/Challenges/AutoSchool_beta.py)
-* [Palindrome-checker](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/S1/Palindomechecker.py)
-* Password-checker: [basic](https://github.com/dogefreak/FHICT/blob/main/App-Layer/S1/Challenges/Passwordchecker.py), [configurable](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/S1/Passcheck-withconfig.py)
-* Password-generator: [short](https://github.com/dogefreak/FHICT/blob/main/App-Layer/S1/Challenges/Passwordgenerator.py), [long](https://github.com/dogefreak/FHICT/blob/main/App-Layer/Challenges/S1/Passwordgenerator_func.py)
+* [Is it vacation yet? (not a challenge but decent complexity)](https://github.com/dogefreak/FHICT/blob/main/S1/App-Layer/Challenges/AutoSchool_beta.py)
+* [Palindrome-checker](https://github.com/dogefreak/FHICT/blob/main/S1/App-Layer/Challenges/Palindomechecker.py)
+* Password-checker: [basic](https://github.com/dogefreak/FHICT/blob/main/S1/App-Layer/Challenges/Passwordchecker.py), [configurable](https://github.com/dogefreak/FHICT/blob/main/S1/App-Layer/Challenges/Passcheck-withconfig.py)
+* Password-generator: [short](https://github.com/dogefreak/FHICT/blob/main/S1/App-Layer/Challenges/Passwordgenerator.py), [long](https://github.com/dogefreak/FHICT/blob/main/S1/App-Layer/Challenges/Passwordgenerator_func.py)
