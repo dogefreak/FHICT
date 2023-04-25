@@ -3,4 +3,4 @@
 * Scapy library has been used, no requirements.txt
 * Still work in progress! 
 
-The goal is to create a python script that captures traffic between a random host and the gateway of a network by poisoning the ARP cache.
+The goal is to create a Python script that captures traffic between a random host and the gateway of a network by poisoning the ARP cache.
