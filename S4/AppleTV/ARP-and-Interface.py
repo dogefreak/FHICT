@@ -7,6 +7,7 @@ import struct
 from scapy.all import *
 
 interfaces = ['en0', 'en1']
+clients = []
 
 def get_subnet_mask(mask):
     # Convert the mask to an integer
@@ -29,11 +30,8 @@ def scan_network(gateway, subnet):
 
     result = srp(packet, timeout=2, verbose=0)[0]
 
-    clients = []
     for sent, received in result:
         clients.append({'ip': received.psrc, 'mac': received.hwsrc})
-
-    print(clients)
 
 for iface in interfaces:
     # Get local IP, MAC address, and subnet mask for the current interface
